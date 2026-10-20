@@ -1,28 +1,25 @@
 import heapq
 from collections import deque
 
-# ---------- labirinto (12 x 12) ----------
-# Rota curta: desce pela esquerda e vai pela linha de baixo (26 passos).
-# Rota longa: linha de cima + coluna da direita + zigue-zague (56 passos).
-# Armadilha da gulosa: em (9, 10) falta h=3, mas a parede da linha 10 separa de F.
+DIRECOES = [(-1, 0), (0, 1), (1, 0), (0, -1)]
+
 labirinto = [
-    "I...........",
-    ".##########.",
-    ".#...#....#.",
-    ".#.#.#.##.#.",
-    ".#.#...#..#.",
-    "...######.#.",
-    ".#.......##.",
-    ".#.#####.#..",
-    ".#.#...#.#.#",
-    ".###.#.#...#",
-    ".....#.#####",
-    "######.....F",
+    "I....#.........",
+    "##.#.#####.#.##",
+    ".#...#.........",
+    ".#.###.#.###.#.",
+    ".#.....#...#.#.",
+    ".#.###.###.###.",
+    ".......#.#.....",
+    ".###.###.#####.",
+    ".#...#.#.....#.",
+    ".###.#.#.#.###.",
+    ".....#.#.#.....",
+    "##.#.#.#.#.####",
+    ".........#.....",
+    ".###########.#.",
+    "..............F",
 ]
-
-# ---------- ponto de partida (slides, sem alteração) ----------
-DIRECOES = [(-1, 0), (0, 1), (1, 0), (0, -1)]  # ↑ → ↓ ←
-
 
 def achar(lab, simbolo):
     for i, linha in enumerate(lab):
@@ -57,9 +54,7 @@ def desenhar(lab, caminho):
         print(''.join(linha))
 
 
-# ---------- reconstrução do caminho ----------
 def reconstruir(pai, saida):
-    """Volta da saída até o início seguindo pai[v] e inverte."""
     if saida not in pai:
         return []
     caminho = []
@@ -70,7 +65,6 @@ def reconstruir(pai, saida):
     return caminho[::-1]
 
 
-# ---------- DFS (pilha = recursão) ----------
 def dfs(grafo, inicio, saida):
     pai = {inicio: None}
     visitadas = 0
@@ -91,9 +85,8 @@ def dfs(grafo, inicio, saida):
     return reconstruir(pai, saida), visitadas
 
 
-# ---------- BFS (fila) ----------
 def bfs(grafo, inicio, saida):
-    pai = {inicio: None}  # também serve de "visitados"
+    pai = {inicio: None}  
     fila = deque([inicio])
     visitadas = 0
     while fila:
@@ -108,8 +101,7 @@ def bfs(grafo, inicio, saida):
     return reconstruir(pai, saida), visitadas
 
 
-# ---------- busca gulosa (fila de prioridade por h) ----------
-def h(v, saida):  # distância de Manhattan
+def h(v, saida): 
     return abs(v[0] - saida[0]) + abs(v[1] - saida[1])
 
 
@@ -129,7 +121,6 @@ def gulosa(grafo, inicio, saida):
     return reconstruir(pai, saida), visitadas
 
 
-# ---------- execução ----------
 if __name__ == "__main__":
     grafo = montar_grafo(labirinto)
     inicio = achar(labirinto, 'I')
